@@ -1,7 +1,3 @@
-"use client";
-
-import type { CSSProperties } from "react";
-import { useState } from "react";
 import { Gamepad2, Layers3, Sparkles } from "lucide-react";
 
 import ParallaxGlow from "@/components/parallax-glow";
@@ -142,13 +138,6 @@ const education = [
 ] as const;
 
 export default function Home() {
-  const [activeProject, setActiveProject] = useState<
-    (typeof projects)[number] | null
-  >(null);
-  const orbitAngles = projects.map((_, index) =>
-    Math.round((360 / projects.length) * index)
-  );
-
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       <ScrollProgress />
@@ -322,72 +311,52 @@ export default function Home() {
                 open a focused modal with the full story.
               </p>
             </div>
-            <div
-              className="relative mx-auto mt-12 flex w-full max-w-5xl flex-col items-center justify-center gap-6 md:min-h-[560px] md:gap-0"
-              style={{ "--orbit-radius": "15rem" } as CSSProperties}
-            >
-              <div className="pointer-events-none absolute inset-0 hidden items-center justify-center md:flex">
-                <div className="orbit-ring absolute h-[520px] w-[520px] rounded-full border border-border/60" />
-                <div className="orbit-ring-slow absolute h-[380px] w-[380px] rounded-full border border-border/40" />
-                <div className="absolute h-[260px] w-[260px] rounded-full border border-border/30" />
-                <div className="orbit-ring absolute h-[520px] w-[520px] rounded-full border border-transparent">
-                  <span className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 rounded-full bg-accent shadow-[0_0_12px_rgba(79,124,255,0.8)]" />
-                </div>
-                <div className="orbit-ring-slow absolute h-[380px] w-[380px] rounded-full border border-transparent">
-                  <span className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-accent-2 shadow-[0_0_10px_rgba(139,92,246,0.8)]" />
-                </div>
-              </div>
-              <div className="orbit-pulse relative z-10 flex h-40 w-40 flex-col items-center justify-center rounded-full border border-border bg-surface/90 text-center shadow-[0_25px_60px_rgba(15,23,42,0.5)] backdrop-blur">
-                <span className="text-xs font-semibold uppercase tracking-[0.3em] text-muted">
-                  Project
-                </span>
-                <span className="mt-2 font-display text-xl font-semibold">
-                  Orbit
-                </span>
-              </div>
-              <div className="orbit-rotate hidden items-center justify-center md:flex motion-reduce:animate-none">
-                {projects.map((project, index) => {
-                  const Icon = project.icon;
-
-                  return (
-                    <div
-                      key={project.title}
-                      className="orbit-slot"
-                      style={{ "--angle": `${orbitAngles[index]}deg` } as CSSProperties}
-                    >
-                      <button
-                        className="orbit-item group relative z-10 flex flex-col items-center gap-2 rounded-2xl border border-border/80 bg-surface/80 px-5 py-4 text-center shadow-[0_18px_40px_rgba(8,10,18,0.45)] backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-accent/70 hover:shadow-[0_24px_70px_rgba(79,124,255,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                        type="button"
-                        onClick={() => setActiveProject(project)}
-                        aria-label={project.title}
+            <div className="mt-12 grid gap-6 md:grid-cols-3">
+              {projects.map((project) => (
+                <TiltCard key={project.title} cardClassName="p-6">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="rounded-full border border-border px-3 py-1 text-xs font-medium text-muted">
+                      {project.period}
+                    </span>
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background/70 text-accent">
+                      <project.icon className="h-4 w-4" aria-hidden="true" />
+                    </span>
+                  </div>
+                  <h3 className="mt-4 font-display text-lg font-semibold">
+                    {project.title}
+                  </h3>
+                  <p className="mt-3 text-sm text-muted">
+                    {project.description}
+                  </p>
+                  <ul className="mt-4 space-y-2 text-sm text-muted">
+                    {project.details.map((detail) => (
+                      <li key={detail} className="flex gap-2">
+                        <span className="mt-1 h-1.5 w-1.5 flex-none rounded-full bg-accent" />
+                        <span>{detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {project.stack.map((item) => (
+                      <span
+                        key={item}
+                        className="rounded-full border border-border px-3 py-1 text-xs font-medium text-muted"
                       >
-                        <span className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-background/70 text-accent transition group-hover:border-accent/70 group-hover:text-accent">
-                          <Icon className="h-6 w-6" aria-hidden="true" />
-                        </span>
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="grid w-full grid-cols-3 gap-4 md:hidden">
-                {projects.map((project) => {
-                  const Icon = project.icon;
-
-                  return (
-                    <button
-                      key={project.title}
-                      className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-border/80 bg-surface/85 px-4 py-5 text-center shadow-[0_18px_40px_rgba(8,10,18,0.4)] transition hover:border-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-                      type="button"
-                      onClick={() => setActiveProject(project)}
-                      aria-label={project.title}
-                    >
-                      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background/70 text-accent">
-                        <Icon className="h-5 w-5" aria-hidden="true" />
+                        {item}
                       </span>
-                    </button>
-                  );
-                })}
-              </div>
+                    ))}
+                  </div>
+                  <a
+                    className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-accent transition hover:text-accent/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    href={project.link}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    View on GitHub
+                    <span aria-hidden>↗</span>
+                  </a>
+                </TiltCard>
+              ))}
             </div>
           </div>
         </ScrollSection>
@@ -503,75 +472,6 @@ export default function Home() {
           </div>
         </ScrollSection>
       </main>
-
-      {activeProject ? (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-background/80 px-6 py-10 backdrop-blur-sm"
-          onClick={() => setActiveProject(null)}
-          role="presentation"
-        >
-          <div
-            className="relative w-full max-w-2xl rounded-3xl border border-border bg-surface/95 p-8 shadow-[0_30px_80px_rgba(8,10,18,0.6)] transition duration-300 animate-fade-up"
-            onClick={(event) => event.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="project-modal-title"
-          >
-            <button
-              className="absolute right-6 top-6 rounded-full border border-border p-2 text-sm text-muted transition hover:border-accent hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              type="button"
-              onClick={() => setActiveProject(null)}
-              aria-label="Close project details"
-            >
-              ✕
-            </button>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="rounded-full border border-border px-3 py-1 text-xs font-medium text-muted">
-                {activeProject.period}
-              </span>
-              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
-                Academic Project
-              </span>
-            </div>
-            <h3
-              id="project-modal-title"
-              className="mt-4 font-display text-2xl font-semibold"
-            >
-              {activeProject.title}
-            </h3>
-            <p className="mt-4 text-sm text-muted">
-              {activeProject.description}
-            </p>
-            <ul className="mt-4 space-y-2 text-sm text-muted">
-              {activeProject.details.map((detail) => (
-                <li key={detail} className="flex gap-2">
-                  <span className="mt-1 h-1.5 w-1.5 flex-none rounded-full bg-accent" />
-                  <span>{detail}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {activeProject.stack.map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-border px-3 py-1 text-xs font-medium text-muted"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-            <a
-              className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-accent transition hover:text-accent/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              href={activeProject.link}
-              target="_blank"
-              rel="noreferrer"
-            >
-              View on GitHub
-              <span aria-hidden>↗</span>
-            </a>
-          </div>
-        </div>
-      ) : null}
 
       <footer className="border-t border-border/80">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-6 py-6 text-sm text-muted md:flex-row md:items-center md:justify-between">
